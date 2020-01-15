@@ -13,7 +13,7 @@ import pandas as pd
 
 
 class GoogleMapsCrawler:
-    NO_RESULTS = 20
+    NO_RESULTS = 5
     DRIVER_TITLE = 'nail salons in south queens new york'
 
     def get_waiter(self, driver, timeout=10):
@@ -26,8 +26,9 @@ class GoogleMapsCrawler:
 
     def scrape_results(self, driver):
         # i had to do this because google chrome seems to have a weird behaviour
-        for x in range(20):
-            print(x, 'th iteration')
+        for x in range(self.NO_RESULTS):
+            sys.stdout.write('{}th iteration\r'.format(x))
+            sys.stdout.flush()
             results = driver.find_elements(By.XPATH, '//div[@class="section-result"]')
             results[x].click()
             sleep(3)
@@ -59,15 +60,27 @@ class GoogleMapsCrawler:
             sleep(1)
 
     def scrape(self, driver):
+        has_next_page = True
         # TODO: make initial checks here
-        self.scrape_results(driver)
-        # TODO: go to next page
+        while has_next_page:
+            self.scrape_results(driver)
+            # TODO: go to next page
+            next_button = driver.find_element(By.XPATH, '//div/button[contains(@aria-label,"Next page")]')
+            next_button.click()
+            sleep(3)
+        # self.scrape_results(driver)
+        # # TODO: go to next page
+        # next_button = driver.find_element(By.XPATH, '//div/button[contains(@aria-label,"Next page")]')
+        # next_button.click()
+        # sleep(5)
+        # if next_button.is_enabled():
+        #     next_button.click()
 
     def main(self):
         driver = webdriver.Chrome()
         driver.get('https://www.google.com/maps/search/nail+salons+in+south+queens+new+york')
         sleep(2)
-        self.ready_scrape(driver)
+        self.scrape(driver)
 
 
 if __name__ == '__main__':
