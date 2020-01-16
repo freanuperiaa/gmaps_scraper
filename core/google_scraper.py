@@ -24,17 +24,17 @@ class GoogleMapsCrawler:
     def export_to_csv(self):
         data_frame = pd.DataFrame(self.data, columns=['name', 'contact number', 'address1', 'address2'])
         print('the data frame contains', len(self.data), 'rows.')
-        file_name = self.DRIVER_TITLE + '-' + str(self.times_printed)
+        file_name = self.DRIVER_TITLE + '-' + str(self.times_printed)+'.csv'
         data_frame.to_csv(file_name)
 
     def scrape_results(self, driver, curr_page):
         wait = self.get_waiter(driver)  # init waiter for this method
         print('{}th page'.format(curr_page))
         # i had to do this because google chrome seems to have a weird behaviour
-        for x in range(self.NO_RESULTS):
-            sys.stdout.write('{}th iteration\r'.format(x))
+        for curr_item in range(self.NO_RESULTS):
+            sys.stdout.write('{}th iteration\r'.format(curr_item))
             sys.stdout.flush()
-            for x in range((curr_page-1)):
+            for page in range((curr_page-1)):
                 next_button = driver.find_element(By.XPATH, '//div/button[contains(@aria-label,"Next page")]')
                 if next_button.is_enabled():
                     next_button.click()
@@ -56,7 +56,7 @@ class GoogleMapsCrawler:
                         self.export_to_csv()
                         pass
             results = driver.find_elements(By.XPATH, '//div[@class="section-result"]')
-            results[x].click()
+            results[curr_item].click()
             wait.until(
                 exp_con.presence_of_element_located((
                     By.XPATH, '//h1[contains(@class, "title-title")]'
