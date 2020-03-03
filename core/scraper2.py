@@ -13,7 +13,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 def export_to_csv(data_frame):
     print('the data frame contains', len(data_frame), 'rows.')
-    file_name = input('enter file name for csv')
+    file_name = input('enter file name for csv: ')
     data_frame.to_csv(file_name)
 
 
@@ -106,7 +106,7 @@ def scrape(driver):
     # check if we're on the current page
     curr_page = int(driver.find_element(By.XPATH, '//div[@class="deals_pagination_pages"]/span[@class="red"]').text)
     # iterate through every page of the results
-    while curr_page <= 145:
+    while curr_page <= 144:
         print('current page:', curr_page)
         print('no. of data scraped:', len(trd_data))
         curr_page_data = scrape_from_page(driver)

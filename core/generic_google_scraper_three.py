@@ -71,15 +71,7 @@ class GoogleMapsCrawler:
                         pass
             results = driver.find_elements(By.XPATH, '//div[@class="section-result"]')
             sleep(0.5)
-            try:
-                results[curr_item].click()
-            except Exception:
-                self.export_to_csv()
-                wait.until(
-                    exp_con.presence_of_element_located((
-                        By.XPATH, '//h1[contains(@class, "title-title")]'
-                    ))
-                )
+            results[curr_item].click()
             wait.until(
                 exp_con.presence_of_element_located((
                     By.XPATH, '//h1[contains(@class, "title-title")]'
@@ -160,5 +152,5 @@ class GoogleMapsCrawler:
 
 
 if __name__ == '__main__':
-    crawler = GoogleMapsCrawler('yonker new york properties for lease', 20, 5)
+    crawler = GoogleMapsCrawler('Suburban office in new jersey', 20, 5)
     crawler.main()
