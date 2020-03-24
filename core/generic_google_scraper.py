@@ -26,7 +26,7 @@ class GoogleMapsCrawler:
         return ui.WebDriverWait(driver, timeout)
 
     def export_to_csv(self):
-        data_frame = pd.DataFrame(self.data, columns=['name', 'contact number', 'address1', 'address2'])
+        data_frame = pd.DataFrame(self.data, columns=['name', 'contact number', 'address1', 'address2', 'website'])
         print('the data frame contains', len(self.data), 'rows.')
         file_name = self.DRIVER_TITLE.replace(' ', '_') + '-' + str(self.times_printed)+'.csv'
         data_frame.to_csv(file_name)
@@ -113,8 +113,15 @@ class GoogleMapsCrawler:
                 ).text
             except Exception:
                 address2 = ''
+            try:
+                website = driver.find_element(
+                    By.XPATH,
+                    '//*[@id="pane"]/div/div[1]/div/div/div[10]/div/div[1]/span[3]/span[3]'  # TODO: this is not a relative path. this should be fixed soon
+                ).text
+            except Exception:
+                website = ''
             new_data = ((
-                name, phone_number, address1, address2
+                name, phone_number, address1, address2, website
             ))
             self.data.append(new_data)
             sleep(1)
@@ -160,5 +167,5 @@ class GoogleMapsCrawler:
 
 
 if __name__ == '__main__':
-    crawler = GoogleMapsCrawler('yonker new york properties for lease', 20, 5)
+    crawler = GoogleMapsCrawler('supermarkets in long island county, NY', 20, 5)
     crawler.main()
