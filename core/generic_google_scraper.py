@@ -7,6 +7,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as exp_con
 import selenium.webdriver.support.ui as ui
 import pandas as pd
+import urllib.request
+
+from .exceptions import *
 
 
 class GoogleMapsCrawler:
@@ -17,6 +20,24 @@ class GoogleMapsCrawler:
         self.NO_PAGES = no_pages
         self.data = []
         self.times_printed = 1
+
+    def is_connected_to_network(self):
+        try:
+            urllib.request.urlopen('http://google.com')
+            return True
+        except:
+            return False
+
+    def wait_for_reconnection(self):
+        not_connected = True
+        ten_minutes = 10 * 60  # 10 times 60 seconds
+        time_elapsed = 0
+        while not_connected:
+            if time_elapsed > ten_minutes:
+                raise NetworkConnectionException
+            sleep(3)
+            time_elapsed += (3 + 1)  # 3 seconds on sleep, another 1 for other calculations
+            not_connected = not self.is_connected_to_network(self)
 
     def get_url(self, to_search):
         url_fragment = to_search.replace(' ', '+')
@@ -77,6 +98,7 @@ class GoogleMapsCrawler:
                 self.export_to_csv()
                 wait.until(
                     exp_con.presence_of_element_located((
+                        # FIXME: the problem is here, everytime there's a network problem, it goes down to this.
                         By.XPATH, '//h1[contains(@class, "title-title")]'
                     ))
                 )

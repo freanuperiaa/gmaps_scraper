@@ -6,3 +6,8 @@ class Exc(Exception):
 class ElementNotFoundException(Exc):
     def __str__(self):
         return '''Element specified cannot be found. check your xpath/class'''
+
+
+class NetworkConnectionException(Exc):
+    def __str__(self):
+        return '''Problem with network occurred. Please check your network connection.'''
