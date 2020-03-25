@@ -37,7 +37,7 @@ class GoogleMapsCrawler:
                 raise NetworkConnectionException
             sleep(3)
             time_elapsed += (3 + 1)  # 3 seconds on sleep, another 1 for other calculations
-            not_connected = not self.is_connected_to_network(self)
+            not_connected = not self.is_connected_to_network()
 
     def get_url(self, to_search):
         url_fragment = to_search.replace(' ', '+')
