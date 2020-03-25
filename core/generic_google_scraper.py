@@ -9,7 +9,7 @@ import selenium.webdriver.support.ui as ui
 import pandas as pd
 import urllib.request
 
-from .exceptions import *
+from exceptions import *
 
 
 class GoogleMapsCrawler:
@@ -93,9 +93,12 @@ class GoogleMapsCrawler:
             results = driver.find_elements(By.XPATH, '//div[@class="section-result"]')
             sleep(0.5)
             try:
+                # added checking of network here to make sure there's internet before interacting
+                self.wait_for_reconnection()
                 results[curr_item].click()
             except Exception:
-                self.export_to_csv()
+                # self.export_to_csv()
+                self.wait_for_reconnection()  # added here to wait for reconnection before handling error
                 wait.until(
                     exp_con.presence_of_element_located((
                         # FIXME: the problem is here, everytime there's a network problem, it goes down to this.
@@ -150,6 +153,8 @@ class GoogleMapsCrawler:
             driver.back()
             # start of nested try-catch statements
             try:
+                # added here to wait for reconnection before handling error
+                self.wait_for_reconnection()
                 wait.until(
                     exp_con.presence_of_element_located((
                         By.XPATH, '//div[@class="section-result"]'
