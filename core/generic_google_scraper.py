@@ -72,7 +72,18 @@ class GoogleMapsCrawler:
                     wait.until(exp_con.element_to_be_clickable((
                         By.XPATH, '//div/button[contains(@aria-label,"Next page")]'
                     )))
-                    next_button.click()
+                    # FIXME: Here on next_button.click(), ElementClickInterceptedException is being raised when there's
+                    # FIXME:  a problem with the element.
+                    # TODO: I used another way of clicking the next button. please check
+                    try:
+                        next_button.click()
+                    except Exception:
+                        try:
+                            # https://stackoverflow.com/questions/48665001/can-not-click-on-a-element-elementclickinterceptedexception-in-splinter-selen#answer-48667924
+                            print('ElementClickInterceptedException occurred. trying a click workaround.')
+                            webdriver.ActionChains(driver).move_to_element(next_button).click(next_button).perform()
+                        except Exception:
+                            raise StaleElementException
                 try:
                     wait.until(
                         exp_con.presence_of_element_located((
@@ -102,6 +113,7 @@ class GoogleMapsCrawler:
                 wait.until(
                     exp_con.presence_of_element_located((
                         # FIXME: the problem is here, everytime there's a network problem, it goes down to this.
+                        # TODO: i have resolved the issue by making wait_for_reconnection(). please check
                         By.XPATH, '//h1[contains(@class, "title-title")]'
                     ))
                 )
@@ -194,5 +206,5 @@ class GoogleMapsCrawler:
 
 
 if __name__ == '__main__':
-    crawler = GoogleMapsCrawler('supermarkets in long island county, NY', 20, 5)
+    crawler = GoogleMapsCrawler('supermarkets in long island county, NY', 20, 20)
     crawler.main()

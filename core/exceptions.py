@@ -11,3 +11,8 @@ class ElementNotFoundException(Exc):
 class NetworkConnectionException(Exc):
     def __str__(self):
         return '''Problem with network occurred. Please check your network connection.'''
+
+
+class StaleElementException(Exc):
+    def __str__(self):
+        return '''There is a problem interacting with the selected element. Please check webdriver actions.'''
